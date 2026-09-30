@@ -10,6 +10,7 @@ import { DeviceManager, validateDeviceName } from './devices/deviceManager';
 import { GitManager } from './git/gitManager';
 import { PrivacyManager } from './privacy/privacyManager';
 import { SettingsManager } from './settings/settingsManager';
+import { SettingsWatcher } from './settings/settingsWatcher';
 import { SessionPersister } from './storage/sessionPersister';
 import { createStorage } from './storage/storage';
 import { ApiClient } from './sync/apiClient';
@@ -29,6 +30,18 @@ import { HOUR, MINUTE, SECOND, systemClock } from './utils/time';
 import { checkServerUrl } from './utils/url';
 import { WorkspaceManager } from './workspace/workspaceManager';
 
+/** Internals exposed to the integration tests only (never in normal use). */
+export interface DevPulseTestApi {
+  tracking: TrackingController;
+  appState: AppState;
+  auth: AuthManager;
+  api: ApiClient;
+  engine: SyncEngine;
+  settings: SettingsManager;
+  storage: ReturnType<typeof createStorage>;
+  ready: Promise<void>;
+}
+
 let services: DisposableStore | undefined;
 let shutdown: (() => Promise<void>) | undefined;
 
@@ -37,7 +50,7 @@ let shutdown: (() => Promise<void>) | undefined;
  * creates them in dependency order, connects their events and registers commands. Nothing
  * expensive runs synchronously here.
  */
-export function activate(context: vscode.ExtensionContext): void {
+export function activate(context: vscode.ExtensionContext): DevPulseTestApi | undefined {
   const store = new DisposableStore();
   services = store;
   const version = String(context.extension.packageJSON.version);
@@ -184,6 +197,8 @@ export function activate(context: vscode.ExtensionContext): void {
     },
   });
 
+  const settingsWatcher = store.add(new SettingsWatcher(settings, () => auth.device !== undefined));
+
   // Another window connected/disconnected, or connection settings changed.
   store.add(
     context.secrets.onDidChange((event) => {
@@ -305,19 +320,24 @@ export function activate(context: vscode.ExtensionContext): void {
 
   // 9. Start: restore state, then begin tracking and syncing in the background.
   shutdown = () => tracking.shutdown();
-  void (async () => {
+  const ready = (async () => {
     await storage.queue.recoverStaleClaims().catch((error: unknown) => {
       logger.warn('Could not recover queued events', error);
     });
     await auth.initialize();
+    settingsWatcher.checkInitial();
     engine.refreshStatus();
     await tracking.start();
     appState.start();
     sync.start();
-    await account.showWelcomeIfNeeded();
+    // Not awaited: the prompt waits for the user.
+    void account.showWelcomeIfNeeded();
   })().catch((error: unknown) => logger.error('DevPulse failed to start', error));
 
   logger.info(`DevPulse ${version} activated`);
+  return context.extensionMode === vscode.ExtensionMode.Test
+    ? { tracking, appState, auth, api, engine, settings, storage, ready }
+    : undefined;
 }
 
 export async function deactivate(): Promise<void> {

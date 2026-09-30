@@ -34,6 +34,30 @@
   "activationEvents": [
     "onStartupFinished"
   ],
+  "extensionKind": [
+    "workspace"
+  ],
+  "capabilities": {
+    "untrustedWorkspaces": {
+      "supported": "limited",
+      "description": "In untrusted workspaces DevPulse still tracks coding time, but Git metadata is disabled and workspace settings cannot change privacy or exclusion settings.",
+      "restrictedConfigurations": [
+        "devpulse.privacy.trackLanguage",
+        "devpulse.privacy.trackFileNames",
+        "devpulse.privacy.trackRepository",
+        "devpulse.privacy.trackGit",
+        "devpulse.privacy.trackTerminal",
+        "devpulse.privacy.trackDebugging",
+        "devpulse.exclusions.projects",
+        "devpulse.exclusions.folders",
+        "devpulse.exclusions.languages"
+      ]
+    },
+    "virtualWorkspaces": {
+      "supported": "limited",
+      "description": "In virtual workspaces DevPulse tracks coding time without Git metadata."
+    }
+  },
   "contributes": {
     "commands": [
       {
