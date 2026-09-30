@@ -20,4 +20,8 @@ describe('Extension activation', () => {
     for (const command of contributed)
       assert.ok(registered.has(command), `${command} is registered`);
   });
+
+  it('opens the DevPulse activity view', async () => {
+    await vscode.commands.executeCommand('devpulse.openActivity');
+  });
 });

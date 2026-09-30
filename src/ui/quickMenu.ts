@@ -26,6 +26,7 @@ export async function showQuickMenu(appState: AppState): Promise<void> {
     {
       label: `$(history) Current Session: ${session ? formatDuration(session.activeSeconds) : '—'}`,
       description: session ? tracking.status : undefined,
+      command: Commands.openActivity,
     },
     {
       label: `${CONNECTION_SYMBOLS[connection]} ${CONNECTION_LABELS[connection]}`,

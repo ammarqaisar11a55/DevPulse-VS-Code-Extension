@@ -13,6 +13,7 @@ export const Commands = {
   renameDevice: 'devpulse.renameDevice',
   showMenu: 'devpulse.showMenu',
   openDashboard: 'devpulse.openDashboard',
+  openActivity: 'devpulse.openActivity',
   openSettings: 'devpulse.openSettings',
   showLogs: 'devpulse.showLogs',
 } as const;

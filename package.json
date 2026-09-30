@@ -115,6 +115,12 @@
         "icon": "$(link-external)"
       },
       {
+        "command": "devpulse.openActivity",
+        "title": "Open Activity",
+        "category": "DevPulse",
+        "icon": "$(pulse)"
+      },
+      {
         "command": "devpulse.openSettings",
         "title": "Open Settings",
         "category": "DevPulse",
@@ -314,7 +320,105 @@
           }
         }
       }
-    ]
+    ],
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "devpulse",
+          "title": "DevPulse",
+          "icon": "resources/devpulse-activity.svg"
+        }
+      ]
+    },
+    "views": {
+      "devpulse": [
+        {
+          "id": "devpulse.activity",
+          "name": "Overview",
+          "icon": "resources/devpulse-activity.svg",
+          "contextualTitle": "DevPulse"
+        }
+      ]
+    },
+    "viewsWelcome": [
+      {
+        "view": "devpulse.activity",
+        "when": "!devpulse.connected && !devpulse.needsReconnect",
+        "contents": "Track your coding time and development activity privately.\n\nGenerate a connection key in DevPulse → Settings → Integrations, then connect this editor.\n\n[Connect Account](command:devpulse.connect)\n\nDevPulse never records keystrokes, clipboard contents or source code. [Privacy settings](command:devpulse.openSettings)"
+      }
+    ],
+    "menus": {
+      "view/title": [
+        {
+          "command": "devpulse.pauseTracking",
+          "when": "view == devpulse.activity && devpulse.connected && !devpulse.paused",
+          "group": "navigation@1"
+        },
+        {
+          "command": "devpulse.resumeTracking",
+          "when": "view == devpulse.activity && devpulse.connected && devpulse.paused",
+          "group": "navigation@1"
+        },
+        {
+          "command": "devpulse.syncNow",
+          "when": "view == devpulse.activity && devpulse.connected",
+          "group": "navigation@2"
+        },
+        {
+          "command": "devpulse.openDashboard",
+          "when": "view == devpulse.activity && devpulse.connected",
+          "group": "navigation@3"
+        },
+        {
+          "command": "devpulse.startSession",
+          "when": "view == devpulse.activity && devpulse.connected && !devpulse.sessionOpen && !devpulse.paused",
+          "group": "session@1"
+        },
+        {
+          "command": "devpulse.endSession",
+          "when": "view == devpulse.activity && devpulse.sessionOpen",
+          "group": "session@2"
+        },
+        {
+          "command": "devpulse.renameDevice",
+          "when": "view == devpulse.activity && devpulse.connected",
+          "group": "device@1"
+        },
+        {
+          "command": "devpulse.reconnect",
+          "when": "view == devpulse.activity && devpulse.needsReconnect",
+          "group": "device@2"
+        },
+        {
+          "command": "devpulse.disconnect",
+          "when": "view == devpulse.activity && (devpulse.connected || devpulse.needsReconnect)",
+          "group": "device@3"
+        },
+        {
+          "command": "devpulse.openSettings",
+          "when": "view == devpulse.activity",
+          "group": "settings@1"
+        }
+      ],
+      "commandPalette": [
+        {
+          "command": "devpulse.pauseTracking",
+          "when": "devpulse.connected && !devpulse.paused"
+        },
+        {
+          "command": "devpulse.resumeTracking",
+          "when": "devpulse.paused"
+        },
+        {
+          "command": "devpulse.endSession",
+          "when": "devpulse.sessionOpen"
+        },
+        {
+          "command": "devpulse.disconnect",
+          "when": "devpulse.connected || devpulse.needsReconnect"
+        }
+      ]
+    }
   },
   "scripts": {
     "vscode:prepublish": "npm run build",
