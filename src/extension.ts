@@ -7,6 +7,8 @@ import { AuthManager } from './auth/authManager';
 import { CredentialStore } from './auth/credentialStore';
 import { Commands } from './commands';
 import { DeviceManager, validateDeviceName } from './devices/deviceManager';
+import { buildDiagnostics } from './diagnostics/diagnosticsService';
+import { DiagnosticsDocumentProvider, DIAGNOSTICS_SCHEME } from './diagnostics/diagnosticsView';
 import { GitManager } from './git/gitManager';
 import { PrivacyManager } from './privacy/privacyManager';
 import { SettingsManager } from './settings/settingsManager';
@@ -22,6 +24,7 @@ import { SyncScheduler } from './sync/syncScheduler';
 import { ACTIVITY_VIEW_ID, ActivityViewProvider } from './ui/activityView';
 import { AppState } from './ui/appState';
 import { DashboardPanel } from './ui/dashboardView';
+import { Notifier } from './ui/notifications';
 import { showQuickMenu } from './ui/quickMenu';
 import { StatusBar } from './ui/statusBar';
 import { DisposableStore } from './utils/disposables';
@@ -112,16 +115,9 @@ export function activate(context: vscode.ExtensionContext): DevPulseTestApi | un
     }),
   );
 
+  // Revocation is surfaced to the user by the notifier when the auth state changes.
   const onAuthError = async (error: ApiError) => {
-    if (!(await auth.handleApiError(error))) return;
-    void vscode.window
-      .showWarningMessage(
-        'DevPulse was disconnected from your account (the device was revoked). Unsynced activity is kept on this computer until you reconnect.',
-        'Reconnect',
-      )
-      .then((action) => {
-        if (action) void vscode.commands.executeCommand(Commands.reconnect);
-      });
+    await auth.handleApiError(error);
   };
 
   const engine = new SyncEngine({
@@ -227,6 +223,9 @@ export function activate(context: vscode.ExtensionContext): DevPulseTestApi | un
   const activityView = store.add(new ActivityViewProvider(appState));
   store.add(vscode.window.createTreeView(ACTIVITY_VIEW_ID, { treeDataProvider: activityView }));
   const dashboard = store.add(new DashboardPanel(appState));
+  store.add(new Notifier(appState));
+  const diagnostics = store.add(new DiagnosticsDocumentProvider());
+  store.add(vscode.workspace.registerTextDocumentContentProvider(DIAGNOSTICS_SCHEME, diagnostics));
 
   // 8. Commands.
   const register = (id: string, handler: () => unknown) =>
@@ -315,6 +314,44 @@ export function activate(context: vscode.ExtensionContext): DevPulseTestApi | un
   register(Commands.openActivity, () =>
     vscode.commands.executeCommand('workbench.view.extension.devpulse'),
   );
+  register(Commands.showDiagnostics, async () => {
+    const report = await vscode.window.withProgress(
+      { location: vscode.ProgressLocation.Window, title: 'DevPulse: collecting diagnostics…' },
+      async () => {
+        let apiReachable: 'reachable' | 'unreachable' | 'invalid URL' = 'invalid URL';
+        if (urlCheck().ok) {
+          apiReachable = await api.health.ping().then(
+            () => 'reachable' as const,
+            () => 'unreachable' as const,
+          );
+        }
+        await appState.refresh();
+        const snapshot = appState.snapshot;
+        return buildDiagnostics({
+          snapshot,
+          settings: settings.settings,
+          apiReachable,
+          queue: await storage.queue.stats(),
+          bufferedEvents: recorder.buffered,
+          extensionVersion: version,
+          editor: {
+            appName: vscode.env.appName,
+            version: vscode.version,
+            remoteName: vscode.env.remoteName,
+          },
+          platform: `${process.platform} ${process.arch}`,
+          workspace: {
+            kind: workspace.snapshot.kind,
+            trusted: workspace.snapshot.trusted,
+            folders: workspace.snapshot.folders.length,
+          },
+          git: git.availability,
+          now: clock.now(),
+        });
+      },
+    );
+    await diagnostics.show(report);
+  });
   register(Commands.openSettings, () => settings.open());
   register(Commands.showLogs, () => output.show(true));
 

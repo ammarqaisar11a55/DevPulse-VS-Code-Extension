@@ -32,7 +32,7 @@ export async function showQuickMenu(appState: AppState): Promise<void> {
       label: `${CONNECTION_SYMBOLS[connection]} ${CONNECTION_LABELS[connection]}`,
       description: snapshot.device?.deviceName,
       detail: SYNC_LABELS[snapshot.sync.status],
-      command: Commands.syncNow,
+      command: Commands.showDiagnostics,
     },
   ];
   if (tracking.projectName) {
@@ -70,7 +70,7 @@ export async function showQuickMenu(appState: AppState): Promise<void> {
   }
   actions.push(
     { label: '$(gear) Settings', command: Commands.openSettings },
-    { label: '$(output) Show Logs', command: Commands.showLogs },
+    { label: '$(pulse) Show Diagnostics', command: Commands.showDiagnostics },
   );
   if (connected)
     actions.push({ label: '$(debug-disconnect) Disconnect', command: Commands.disconnect });

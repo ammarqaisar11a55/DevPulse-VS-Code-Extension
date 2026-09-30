@@ -139,7 +139,7 @@ export function buildItems(snapshot: AppSnapshot, now: number): InfoItem[] {
       connection === 'CONNECTED' || connection === 'SYNCING' ? 'plug' : 'debug-disconnect',
       {
         description: snapshot.device?.deviceName,
-        command: snapshot.auth === 'CONNECTED' ? undefined : Commands.reconnect,
+        command: snapshot.auth === 'CONNECTED' ? Commands.showDiagnostics : Commands.reconnect,
       },
     ),
   );

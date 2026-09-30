@@ -151,6 +151,12 @@
         "icon": "$(dashboard)"
       },
       {
+        "command": "devpulse.showDiagnostics",
+        "title": "Show Diagnostics",
+        "category": "DevPulse",
+        "icon": "$(pulse)"
+      },
+      {
         "command": "devpulse.openSettings",
         "title": "Open Settings",
         "category": "DevPulse",
@@ -433,6 +439,11 @@
           "command": "devpulse.openSettings",
           "when": "view == devpulse.activity",
           "group": "settings@1"
+        },
+        {
+          "command": "devpulse.showDiagnostics",
+          "when": "view == devpulse.activity",
+          "group": "settings@2"
         }
       ],
       "commandPalette": [
