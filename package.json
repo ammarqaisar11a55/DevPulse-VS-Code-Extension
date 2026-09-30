@@ -1,0 +1,265 @@
+{
+  "name": "devpulse",
+  "displayName": "DevPulse — Developer Productivity",
+  "description": "Track your coding time, sessions, projects and languages privately, and sync them with your DevPulse account.",
+  "version": "0.1.0",
+  "publisher": "ammarqaisar11a55",
+  "author": {
+    "name": "Muhammad Ammar Qaisar"
+  },
+  "license": "MIT",
+  "engines": {
+    "vscode": "^1.90.0"
+  },
+  "categories": [
+    "Other",
+    "Visualization"
+  ],
+  "keywords": [
+    "devpulse",
+    "productivity",
+    "time tracking",
+    "coding time",
+    "analytics"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ammarqaisar11a55/DevPulse-VS-Code-Extension.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ammarqaisar11a55/DevPulse-VS-Code-Extension/issues"
+  },
+  "homepage": "https://github.com/ammarqaisar11a55/DevPulse-VS-Code-Extension#readme",
+  "main": "./dist/extension.js",
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "contributes": {
+    "commands": [
+      {
+        "command": "devpulse.openSettings",
+        "title": "Open Settings",
+        "category": "DevPulse",
+        "icon": "$(gear)"
+      },
+      {
+        "command": "devpulse.showLogs",
+        "title": "Show Logs",
+        "category": "DevPulse",
+        "icon": "$(output)"
+      }
+    ],
+    "configuration": [
+      {
+        "title": "General",
+        "order": 0,
+        "properties": {
+          "devpulse.enabled": {
+            "type": "boolean",
+            "default": true,
+            "markdownDescription": "Enable DevPulse. When disabled the extension stays loaded but records and uploads nothing."
+          },
+          "devpulse.statusBar.enabled": {
+            "type": "boolean",
+            "default": true,
+            "description": "Show the DevPulse item in the status bar."
+          }
+        }
+      },
+      {
+        "title": "Tracking",
+        "order": 1,
+        "properties": {
+          "devpulse.tracking.enabled": {
+            "type": "boolean",
+            "default": true,
+            "description": "Record coding activity. Turning this off is the same as pausing tracking."
+          },
+          "devpulse.tracking.mode": {
+            "type": "string",
+            "enum": [
+              "automatic",
+              "manual"
+            ],
+            "enumDescriptions": [
+              "A coding session starts automatically when you start working.",
+              "Sessions only start and end with the DevPulse: Start Session and DevPulse: End Session commands."
+            ],
+            "default": "automatic",
+            "description": "How coding sessions are started and ended."
+          },
+          "devpulse.tracking.idleThreshold": {
+            "type": "number",
+            "enum": [
+              1,
+              2,
+              5,
+              10,
+              15
+            ],
+            "default": 5,
+            "markdownDescription": "Minutes without editor activity before you are considered idle. When not set here, the idle timeout from your DevPulse account settings is used."
+          },
+          "devpulse.tracking.sessionTimeout": {
+            "type": "number",
+            "default": 15,
+            "minimum": 5,
+            "maximum": 120,
+            "markdownDescription": "Minutes of inactivity after which the current coding session ends. Resuming work before this starts no new session."
+          },
+          "devpulse.tracking.pauseWhenUnfocused": {
+            "type": "boolean",
+            "default": true,
+            "description": "Stop counting active time while the VS Code window is not focused. Activity resumes on the next edit or navigation after you return."
+          }
+        }
+      },
+      {
+        "title": "Privacy",
+        "order": 2,
+        "properties": {
+          "devpulse.privacy.trackLanguage": {
+            "type": "boolean",
+            "default": true,
+            "description": "Send the programming language of the files you work on (for example \"typescript\")."
+          },
+          "devpulse.privacy.trackFileNames": {
+            "type": "boolean",
+            "default": false,
+            "markdownDescription": "Send file-level metadata: file extensions (such as `.ts`) and counts of changed files and lines. File names, paths and contents are **never** sent."
+          },
+          "devpulse.privacy.trackRepository": {
+            "type": "boolean",
+            "default": false,
+            "markdownDescription": "Send the repository URL (for example `github.com/you/project`) so sessions are matched to the right DevPulse project. Credentials embedded in remote URLs are always removed."
+          },
+          "devpulse.privacy.trackGit": {
+            "type": "boolean",
+            "default": true,
+            "description": "Send Git metadata: the current branch name and commit counts. Commit messages, diffs and code are never sent."
+          },
+          "devpulse.privacy.trackTerminal": {
+            "type": "boolean",
+            "default": false,
+            "description": "Count interaction with the integrated terminal as activity. Terminal input and output are never read or sent."
+          },
+          "devpulse.privacy.trackDebugging": {
+            "type": "boolean",
+            "default": true,
+            "description": "Count debugging sessions as activity and send debug start/stop events with the debugger type."
+          }
+        }
+      },
+      {
+        "title": "Exclusions",
+        "order": 3,
+        "properties": {
+          "devpulse.exclusions.projects": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "default": [],
+            "uniqueItems": true,
+            "description": "Project names (case-insensitive) that are never tracked."
+          },
+          "devpulse.exclusions.folders": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "default": [],
+            "uniqueItems": true,
+            "markdownDescription": "Glob patterns for folders that are never tracked, for example `**/work/**` or `~/secret/**`."
+          },
+          "devpulse.exclusions.languages": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "default": [],
+            "uniqueItems": true,
+            "markdownDescription": "VS Code language identifiers that do not count as coding time, for example `markdown`, `plaintext` or `json`."
+          }
+        }
+      },
+      {
+        "title": "Connection",
+        "order": 4,
+        "properties": {
+          "devpulse.api.baseUrl": {
+            "type": "string",
+            "default": "http://localhost:4000/api/v1",
+            "scope": "application",
+            "markdownDescription": "DevPulse API base URL, including `/api/v1`. Change this for self-hosted deployments. HTTPS is required except for `localhost`."
+          },
+          "devpulse.web.url": {
+            "type": "string",
+            "default": "http://localhost:5173",
+            "scope": "application",
+            "description": "DevPulse web app URL, used by Open Dashboard."
+          },
+          "devpulse.api.allowInsecureHttp": {
+            "type": "boolean",
+            "default": false,
+            "scope": "application",
+            "markdownDescription": "Allow plain `http://` API URLs on hosts other than `localhost`. Only enable this for local development networks: your device credential is sent unencrypted."
+          },
+          "devpulse.sync.interval": {
+            "type": "number",
+            "default": 60,
+            "minimum": 30,
+            "maximum": 600,
+            "description": "Seconds between background synchronizations."
+          }
+        }
+      },
+      {
+        "title": "Diagnostics",
+        "order": 5,
+        "properties": {
+          "devpulse.logging.enabled": {
+            "type": "boolean",
+            "default": false,
+            "description": "Write detailed logs to the DevPulse output channel. Secrets are always redacted."
+          },
+          "devpulse.logging.level": {
+            "type": "string",
+            "enum": [
+              "debug",
+              "info",
+              "warn",
+              "error"
+            ],
+            "default": "info",
+            "description": "Minimum level written to the DevPulse output channel when logging is enabled."
+          }
+        }
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run build",
+    "compile": "node esbuild.mjs",
+    "watch": "node esbuild.mjs --watch",
+    "build": "node esbuild.mjs --production",
+    "typecheck": "tsc -p . --noEmit",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.5",
+    "@types/node": "^20.19.0",
+    "@types/vscode": "~1.90.0",
+    "esbuild": "^0.25.10",
+    "eslint": "^9.39.5",
+    "globals": "^16.5.0",
+    "prettier": "^3.6.2",
+    "typescript": "~5.9.3",
+    "typescript-eslint": "^8.71.0",
+    "vitest": "^3.2.7"
+  }
+}
