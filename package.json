@@ -37,6 +37,24 @@
   "contributes": {
     "commands": [
       {
+        "command": "devpulse.connect",
+        "title": "Connect Account",
+        "category": "DevPulse",
+        "icon": "$(plug)"
+      },
+      {
+        "command": "devpulse.disconnect",
+        "title": "Disconnect Account",
+        "category": "DevPulse",
+        "icon": "$(debug-disconnect)"
+      },
+      {
+        "command": "devpulse.reconnect",
+        "title": "Reconnect Account",
+        "category": "DevPulse",
+        "icon": "$(refresh)"
+      },
+      {
         "command": "devpulse.openSettings",
         "title": "Open Settings",
         "category": "DevPulse",
