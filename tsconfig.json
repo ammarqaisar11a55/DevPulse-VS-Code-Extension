@@ -21,5 +21,6 @@
     "forceConsistentCasingInFileNames": true,
     "noEmit": true
   },
-  "include": ["src", "test", "*.mts", "*.mjs"]
+  "include": ["src", "test", "*.mts", "*.mjs"],
+  "exclude": ["test/integration", "test/fixtures"]
 }
