@@ -3,6 +3,13 @@ export const Commands = {
   connect: 'devpulse.connect',
   disconnect: 'devpulse.disconnect',
   reconnect: 'devpulse.reconnect',
+  pauseTracking: 'devpulse.pauseTracking',
+  resumeTracking: 'devpulse.resumeTracking',
+  startSession: 'devpulse.startSession',
+  endSession: 'devpulse.endSession',
+  syncNow: 'devpulse.syncNow',
+  clearQueue: 'devpulse.clearQueue',
+  excludeProject: 'devpulse.excludeCurrentProject',
   openSettings: 'devpulse.openSettings',
   showLogs: 'devpulse.showLogs',
 } as const;

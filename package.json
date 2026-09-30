@@ -55,6 +55,48 @@
         "icon": "$(refresh)"
       },
       {
+        "command": "devpulse.pauseTracking",
+        "title": "Pause Tracking",
+        "category": "DevPulse",
+        "icon": "$(debug-pause)"
+      },
+      {
+        "command": "devpulse.resumeTracking",
+        "title": "Resume Tracking",
+        "category": "DevPulse",
+        "icon": "$(debug-start)"
+      },
+      {
+        "command": "devpulse.startSession",
+        "title": "Start Session",
+        "category": "DevPulse",
+        "icon": "$(play)"
+      },
+      {
+        "command": "devpulse.endSession",
+        "title": "End Session",
+        "category": "DevPulse",
+        "icon": "$(debug-stop)"
+      },
+      {
+        "command": "devpulse.syncNow",
+        "title": "Sync Now",
+        "category": "DevPulse",
+        "icon": "$(sync)"
+      },
+      {
+        "command": "devpulse.clearQueue",
+        "title": "Clear Local Activity Queue",
+        "category": "DevPulse",
+        "icon": "$(trash)"
+      },
+      {
+        "command": "devpulse.excludeCurrentProject",
+        "title": "Exclude Current Project",
+        "category": "DevPulse",
+        "icon": "$(eye-closed)"
+      },
+      {
         "command": "devpulse.openSettings",
         "title": "Open Settings",
         "category": "DevPulse",
@@ -266,7 +308,8 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "test:e2e": "vitest run --config vitest.e2e.config.mts"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.5",
