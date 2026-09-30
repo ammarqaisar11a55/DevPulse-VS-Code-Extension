@@ -2,12 +2,18 @@
   "name": "devpulse",
   "displayName": "DevPulse — Developer Productivity",
   "description": "Track your coding time, sessions, projects and languages privately, and sync them with your DevPulse account.",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "publisher": "ammarqaisar11a55",
   "author": {
     "name": "Muhammad Ammar Qaisar"
   },
   "license": "MIT",
+  "icon": "resources/icon.png",
+  "galleryBanner": {
+    "color": "#2445d6",
+    "theme": "dark"
+  },
+  "pricing": "Free",
   "engines": {
     "vscode": "^1.90.0"
   },
@@ -479,7 +485,9 @@
     "test:watch": "vitest",
     "test:e2e": "vitest run --config vitest.e2e.config.mts",
     "compile:integration": "tsc -p tsconfig.integration.json",
-    "test:integration": "npm run compile && npm run compile:integration && node ./out/test/integration/runTests.js"
+    "test:integration": "npm run compile && npm run compile:integration && node ./out/test/integration/runTests.js",
+    "package": "vsce package --no-dependencies",
+    "test:vsix": "node ./scripts/test-vsix.mjs"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.5",
@@ -487,6 +495,7 @@
     "@types/node": "^20.19.0",
     "@types/vscode": "~1.90.0",
     "@vscode/test-electron": "^2.5.2",
+    "@vscode/vsce": "^3.9.2",
     "esbuild": "^0.25.10",
     "eslint": "^9.39.5",
     "glob": "^11.1.0",

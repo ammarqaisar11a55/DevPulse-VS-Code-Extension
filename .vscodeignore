@@ -1,0 +1,9 @@
+# Only the bundled extension, its resources and documentation are published.
+**
+!dist/extension.js
+!resources/icon.png
+!resources/devpulse-activity.svg
+!package.json
+!README.md
+!CHANGELOG.md
+!LICENSE
