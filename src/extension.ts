@@ -6,6 +6,7 @@ import { AccountFlows } from './auth/accountFlows';
 import { AuthManager } from './auth/authManager';
 import { CredentialStore } from './auth/credentialStore';
 import { Commands } from './commands';
+import { DeviceManager, validateDeviceName } from './devices/deviceManager';
 import { GitManager } from './git/gitManager';
 import { PrivacyManager } from './privacy/privacyManager';
 import { SettingsManager } from './settings/settingsManager';
@@ -19,7 +20,7 @@ import { SyncEngine } from './sync/syncEngine';
 import { SyncScheduler } from './sync/syncScheduler';
 import { DisposableStore } from './utils/disposables';
 import { RedactingLogger } from './utils/logger';
-import { HOUR, SECOND, systemClock } from './utils/time';
+import { HOUR, MINUTE, SECOND, systemClock } from './utils/time';
 import { checkServerUrl } from './utils/url';
 import { WorkspaceManager } from './workspace/workspaceManager';
 
@@ -121,6 +122,8 @@ export function activate(context: vscode.ExtensionContext): void {
       (storage.state.getGlobal('devpulse.serverConfig')?.heartbeatIntervalSeconds ?? 60) * SECOND,
   });
 
+  const devices = new DeviceManager(api, auth, storage.state, clock, logger);
+
   const refreshConfig = async () => {
     if (!auth.isConnected) return;
     try {
@@ -139,6 +142,7 @@ export function activate(context: vscode.ExtensionContext): void {
     () => settings.settings.syncIntervalSeconds * SECOND,
     [
       { name: 'config', everyMs: 3 * HOUR, run: refreshConfig },
+      { name: 'summary', everyMs: 5 * MINUTE, run: () => devices.refreshSummary() },
       {
         name: 'prune',
         everyMs: 12 * HOUR,
@@ -159,6 +163,7 @@ export function activate(context: vscode.ExtensionContext): void {
     onConnected: async () => {
       engine.refreshStatus();
       sync.invalidate('config');
+      sync.invalidate('summary');
       sync.trigger(0);
     },
     prepareDisconnect: async () => {
@@ -246,6 +251,24 @@ export function activate(context: vscode.ExtensionContext): void {
     }
     tracking.endSession('paused');
     void vscode.window.showInformationMessage(`"${name}" is excluded from DevPulse tracking.`);
+  });
+  register(Commands.renameDevice, async () => {
+    const name = await vscode.window.showInputBox({
+      title: 'Rename DevPulse Device',
+      prompt: 'This name is shown on the Devices page of the DevPulse web app.',
+      value: auth.device?.deviceName ?? '',
+      validateInput: validateDeviceName,
+    });
+    if (name === undefined) return;
+    const result = await devices.rename(name);
+    if (result.ok) {
+      void vscode.window.showInformationMessage(`Device renamed to "${result.name}".`);
+    } else if (result.reason === 'unsupported') {
+      const action = await vscode.window.showWarningMessage(result.message, 'Open Devices');
+      if (action) await account.openWeb('/devices');
+    } else {
+      void vscode.window.showWarningMessage(result.message);
+    }
   });
   register(Commands.openSettings, () => settings.open());
   register(Commands.showLogs, () => output.show(true));

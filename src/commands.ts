@@ -10,6 +10,7 @@ export const Commands = {
   syncNow: 'devpulse.syncNow',
   clearQueue: 'devpulse.clearQueue',
   excludeProject: 'devpulse.excludeCurrentProject',
+  renameDevice: 'devpulse.renameDevice',
   openSettings: 'devpulse.openSettings',
   showLogs: 'devpulse.showLogs',
 } as const;

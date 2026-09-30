@@ -97,6 +97,12 @@
         "icon": "$(eye-closed)"
       },
       {
+        "command": "devpulse.renameDevice",
+        "title": "Rename Device",
+        "category": "DevPulse",
+        "icon": "$(edit)"
+      },
+      {
         "command": "devpulse.openSettings",
         "title": "Open Settings",
         "category": "DevPulse",
