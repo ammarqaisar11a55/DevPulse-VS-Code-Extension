@@ -138,10 +138,15 @@ describe('Tracking and synchronization (mock DevPulse API)', function () {
     assert.equal(new Set(clientIds).size, clientIds.length, 'no duplicate sessions');
     assert.equal(fake.server.sessions.size, 2);
 
-    // Retrying everything again changes nothing.
-    const before = fake.server.events.size;
+    // Retrying everything again creates no new sessions (background syncs may still upload
+    // newly recorded events, so event counts are not compared here).
     await devpulse.engine.sync({ force: true });
-    assert.equal(fake.server.events.size, before);
+    assert.equal(fake.server.sessions.size, 2);
+    const eventIds = fake.server.requests
+      .filter((request) => request.path === '/activity/events')
+      .flatMap((request) => (request.body as { events: { clientEventId: string }[] }).events)
+      .map((event) => event.clientEventId);
+    assert.equal(new Set(eventIds).size, fake.server.events.size, 'every event stored once');
   });
 
   it('does not track excluded languages', async () => {
