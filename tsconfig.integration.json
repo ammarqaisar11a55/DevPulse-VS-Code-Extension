@@ -10,6 +10,6 @@
     "rootDir": ".",
     "sourceMap": true
   },
-  "include": ["test/integration/**/*.ts"],
+  "include": ["test/integration/**/*.ts", "test/unit/fakeServer.ts"],
   "exclude": []
 }

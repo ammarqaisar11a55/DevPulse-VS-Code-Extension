@@ -26,6 +26,10 @@ export class FakeServer {
   rateLimitSeconds: number | undefined;
   failNext: number | undefined;
   credential = 'dpd_test';
+  /** One-time pairing keys still valid. */
+  pairingKeys = new Set<string>(['DP-TEST-KEYS-AAAA']);
+  deviceName = 'VS Code on Linux';
+  summary = { timezone: 'UTC', todaySeconds: 0, weekSeconds: 0 };
 
   get fetch(): FetchLike {
     return async (url, init) => this.handle(url, init);
@@ -65,11 +69,61 @@ export class FakeServer {
       }
     }
 
+    if (method === 'GET' && path === '/health') return this.json(200, { data: { status: 'ok' } });
+    if (method === 'POST' && path === '/integrations/pair') return this.pair(body!);
+    if (method === 'GET' && path === '/integrations/extension/config') {
+      return this.json(200, {
+        data: {
+          config: {
+            idleTimeoutMinutes: 5,
+            trackBranchNames: true,
+            trackRepositoryUrl: true,
+            heartbeatIntervalSeconds: 60,
+          },
+          device: { id: 'device-1', name: this.deviceName },
+          account: { username: 'sam', fullName: 'Sam Carter' },
+        },
+      });
+    }
+    if (method === 'GET' && path === '/integrations/extension/summary') {
+      return this.json(200, { data: this.summary });
+    }
+    if (method === 'PATCH' && path === '/integrations/extension/device') {
+      this.deviceName = String(body?.name ?? '').trim();
+      return this.json(200, { data: { id: 'device-1', name: this.deviceName } });
+    }
+    if (method === 'POST' && path === '/integrations/extension/disconnect') {
+      this.revoked = true;
+      return this.json(204);
+    }
     if (method === 'POST' && path === '/activity/sessions') return this.createSession(body!);
     const patch = /^\/activity\/sessions\/([\w-]+)$/.exec(path);
     if (method === 'PATCH' && patch) return this.updateSession(patch[1]!, body!);
     if (method === 'POST' && path === '/activity/events') return this.ingest(body!);
     return this.error(404, 'NOT_FOUND', 'Route not found');
+  }
+
+  private pair(body: Record<string, unknown>) {
+    const key = String(body.key);
+    if (!this.pairingKeys.delete(key)) {
+      return this.error(400, 'VALIDATION_ERROR', 'This connection key is invalid or has expired.');
+    }
+    this.revoked = false;
+    const device = body.device as { name?: string } | undefined;
+    this.deviceName = device?.name ?? this.deviceName;
+    return this.json(201, {
+      data: {
+        credential: this.credential,
+        device: { id: 'device-1', name: this.deviceName },
+        account: { username: 'sam', fullName: 'Sam Carter' },
+        config: {
+          idleTimeoutMinutes: 5,
+          trackBranchNames: true,
+          trackRepositoryUrl: true,
+          heartbeatIntervalSeconds: 60,
+        },
+      },
+    });
   }
 
   private createSession(body: Record<string, unknown>) {
