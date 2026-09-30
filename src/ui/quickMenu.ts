@@ -61,6 +61,7 @@ export async function showQuickMenu(appState: AppState): Promise<void> {
       );
     }
     actions.push(
+      { label: '$(dashboard) Open Dashboard', command: Commands.openMiniDashboard },
       { label: '$(sync) Sync Now', command: Commands.syncNow },
       { label: '$(link-external) Open DevPulse', command: Commands.openDashboard },
     );

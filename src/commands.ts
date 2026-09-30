@@ -14,6 +14,7 @@ export const Commands = {
   showMenu: 'devpulse.showMenu',
   openDashboard: 'devpulse.openDashboard',
   openActivity: 'devpulse.openActivity',
+  openMiniDashboard: 'devpulse.openMiniDashboard',
   openSettings: 'devpulse.openSettings',
   showLogs: 'devpulse.showLogs',
 } as const;

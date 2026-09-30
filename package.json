@@ -121,6 +121,12 @@
         "icon": "$(pulse)"
       },
       {
+        "command": "devpulse.openMiniDashboard",
+        "title": "Show Summary Dashboard",
+        "category": "DevPulse",
+        "icon": "$(dashboard)"
+      },
+      {
         "command": "devpulse.openSettings",
         "title": "Open Settings",
         "category": "DevPulse",
@@ -363,6 +369,11 @@
           "command": "devpulse.syncNow",
           "when": "view == devpulse.activity && devpulse.connected",
           "group": "navigation@2"
+        },
+        {
+          "command": "devpulse.openMiniDashboard",
+          "when": "view == devpulse.activity && devpulse.connected",
+          "group": "navigation@4"
         },
         {
           "command": "devpulse.openDashboard",

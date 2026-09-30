@@ -20,6 +20,7 @@ import { SyncEngine } from './sync/syncEngine';
 import { SyncScheduler } from './sync/syncScheduler';
 import { ACTIVITY_VIEW_ID, ActivityViewProvider } from './ui/activityView';
 import { AppState } from './ui/appState';
+import { DashboardPanel } from './ui/dashboardView';
 import { showQuickMenu } from './ui/quickMenu';
 import { StatusBar } from './ui/statusBar';
 import { DisposableStore } from './utils/disposables';
@@ -210,6 +211,7 @@ export function activate(context: vscode.ExtensionContext): void {
   store.add(new StatusBar(appState, settings));
   const activityView = store.add(new ActivityViewProvider(appState));
   store.add(vscode.window.createTreeView(ACTIVITY_VIEW_ID, { treeDataProvider: activityView }));
+  const dashboard = store.add(new DashboardPanel(appState));
 
   // 8. Commands.
   const register = (id: string, handler: () => unknown) =>
@@ -294,6 +296,7 @@ export function activate(context: vscode.ExtensionContext): void {
   });
   register(Commands.showMenu, () => showQuickMenu(appState));
   register(Commands.openDashboard, () => account.openWeb('/dashboard'));
+  register(Commands.openMiniDashboard, () => dashboard.show());
   register(Commands.openActivity, () =>
     vscode.commands.executeCommand('workbench.view.extension.devpulse'),
   );

@@ -24,4 +24,19 @@ describe('Extension activation', () => {
   it('opens the DevPulse activity view', async () => {
     await vscode.commands.executeCommand('devpulse.openActivity');
   });
+
+  it('opens the summary dashboard webview', async () => {
+    await vscode.commands.executeCommand('devpulse.openMiniDashboard');
+    const isDashboard = (tab: vscode.Tab) =>
+      tab.input instanceof vscode.TabInputWebview &&
+      tab.input.viewType.endsWith('devpulse.dashboard');
+    let found: vscode.Tab | undefined;
+    for (let i = 0; i < 50 && !found; i++) {
+      found = vscode.window.tabGroups.all.flatMap((group) => group.tabs).find(isDashboard);
+      if (!found) await new Promise((resolve) => setTimeout(resolve, 100));
+    }
+    assert.ok(found, 'dashboard tab is open');
+    assert.equal(found.label, 'DevPulse');
+    await vscode.window.tabGroups.close(found);
+  });
 });
