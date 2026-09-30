@@ -130,6 +130,13 @@ describe.skipIf(!IDENTIFIER || !PASSWORD)('live DevPulse API', () => {
     expect(remote.device.id).toBe(paired.device.deviceId);
     expect(remote.config.heartbeatIntervalSeconds).toBeGreaterThan(0);
 
+    // Device-authenticated rename and account summary.
+    const renamed = await api.devices.rename(`${device.name} (renamed)`);
+    expect(renamed.data).toEqual({ id: paired.device.deviceId, name: `${device.name} (renamed)` });
+    const summary = await api.analytics.summary();
+    expect(summary.data.weekSeconds).toBeGreaterThanOrEqual(summary.data.todaySeconds);
+    expect(summary.data.timezone).toEqual(expect.any(String));
+
     const sessions = new SessionStore(`${dir}/sessions`);
     const queue = new EventQueueStore(`${dir}/queue`, 'e2e', systemClock);
     const privacy = new PrivacyManager(
