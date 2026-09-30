@@ -103,6 +103,18 @@
         "icon": "$(edit)"
       },
       {
+        "command": "devpulse.showMenu",
+        "title": "Show Menu",
+        "category": "DevPulse",
+        "icon": "$(pulse)"
+      },
+      {
+        "command": "devpulse.openDashboard",
+        "title": "Open Dashboard",
+        "category": "DevPulse",
+        "icon": "$(link-external)"
+      },
+      {
         "command": "devpulse.openSettings",
         "title": "Open Settings",
         "category": "DevPulse",

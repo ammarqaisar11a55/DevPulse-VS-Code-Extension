@@ -18,6 +18,9 @@ import { EventRecorder } from './sync/eventRecorder';
 import { RetryManager } from './sync/retryManager';
 import { SyncEngine } from './sync/syncEngine';
 import { SyncScheduler } from './sync/syncScheduler';
+import { AppState } from './ui/appState';
+import { showQuickMenu } from './ui/quickMenu';
+import { StatusBar } from './ui/statusBar';
 import { DisposableStore } from './utils/disposables';
 import { RedactingLogger } from './utils/logger';
 import { HOUR, MINUTE, SECOND, systemClock } from './utils/time';
@@ -189,7 +192,23 @@ export function activate(context: vscode.ExtensionContext): void {
   );
   store.add(settings.onDidChange(() => void auth.initialize().then(() => engine.refreshStatus())));
 
-  // 7. Commands.
+  // 7. User interface.
+  const appState = store.add(
+    new AppState({
+      auth,
+      tracking,
+      sync: engine,
+      settings,
+      state: storage.state,
+      sessions: storage.sessions,
+      queue: storage.queue,
+      clock,
+      logger,
+    }),
+  );
+  store.add(new StatusBar(appState, settings));
+
+  // 8. Commands.
   const register = (id: string, handler: () => unknown) =>
     store.add(vscode.commands.registerCommand(id, handler));
   register(Commands.connect, () => account.connect());
@@ -270,10 +289,12 @@ export function activate(context: vscode.ExtensionContext): void {
       void vscode.window.showWarningMessage(result.message);
     }
   });
+  register(Commands.showMenu, () => showQuickMenu(appState));
+  register(Commands.openDashboard, () => account.openWeb('/dashboard'));
   register(Commands.openSettings, () => settings.open());
   register(Commands.showLogs, () => output.show(true));
 
-  // 8. Start: restore state, then begin tracking and syncing in the background.
+  // 9. Start: restore state, then begin tracking and syncing in the background.
   shutdown = () => tracking.shutdown();
   void (async () => {
     await storage.queue.recoverStaleClaims().catch((error: unknown) => {
@@ -282,6 +303,7 @@ export function activate(context: vscode.ExtensionContext): void {
     await auth.initialize();
     engine.refreshStatus();
     await tracking.start();
+    appState.start();
     sync.start();
     await account.showWelcomeIfNeeded();
   })().catch((error: unknown) => logger.error('DevPulse failed to start', error));

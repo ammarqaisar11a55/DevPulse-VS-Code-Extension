@@ -11,6 +11,8 @@ export const Commands = {
   clearQueue: 'devpulse.clearQueue',
   excludeProject: 'devpulse.excludeCurrentProject',
   renameDevice: 'devpulse.renameDevice',
+  showMenu: 'devpulse.showMenu',
+  openDashboard: 'devpulse.openDashboard',
   openSettings: 'devpulse.openSettings',
   showLogs: 'devpulse.showLogs',
 } as const;
