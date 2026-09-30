@@ -7,6 +7,7 @@ import { checkServerUrl } from '../utils/url';
 import type { SettingsManager } from '../settings/settingsManager';
 import type { AuthManager, ConnectResult } from './authManager';
 import { PairingError } from './authTypes';
+import { StorageError } from './credentialStore';
 import { normalizePairingKey } from './pairingKey';
 
 export interface AccountHooks {
@@ -93,11 +94,9 @@ export class AccountFlows {
         });
       return true;
     } catch (error) {
-      const message =
-        error instanceof PairingError
-          ? error.message
-          : 'Connecting to DevPulse failed unexpectedly.';
-      if (!(error instanceof PairingError)) this.logger.error('Pairing failed', error);
+      const known = error instanceof PairingError || error instanceof StorageError;
+      const message = known ? error.message : 'Connecting to DevPulse failed unexpectedly.';
+      if (!known) this.logger.error('Pairing failed', error);
       const action = await vscode.window.showErrorMessage(message, 'Try Again', 'Open DevPulse');
       if (action === 'Try Again') return this.connect();
       if (action === 'Open DevPulse') await this.openWeb('/settings/integrations');

@@ -27,6 +27,11 @@ import type { SyncResult, SyncSnapshot, SyncStatus } from './syncTypes';
 export const ABANDONED_SESSION_MS = 3 * 60 * 1000;
 /** Heartbeat an open session at least this often even without changes. */
 export const HEARTBEAT_MAX_INTERVAL_MS = 5 * 60 * 1000;
+/**
+ * A heartbeat may only claim the session is open this long after its window last refreshed it,
+ * so a heartbeat sent right after waking from sleep cannot stretch the session across the sleep.
+ */
+export const HEARTBEAT_OWNER_GRACE_MS = 90 * 1000;
 /** The API rejects timestamps further in the future than this. */
 const FUTURE_TOLERANCE_MS = 4 * 60 * 1000;
 const MAX_SESSION_SECONDS = 24 * 3600;
@@ -320,8 +325,10 @@ export class SyncEngine {
     if (record.endedAt !== null) {
       body.endedAt = toIso(record.endedAt);
     } else {
-      // Heartbeat: the session is open until now (idle time included, as wall-clock duration).
-      const heartbeat = Math.min(now, record.startedAt + MAX_SESSION_SECONDS * 1000);
+      // Heartbeat: the session is open until now (idle time included, as wall-clock duration),
+      // but never beyond what its window has confirmed recently.
+      const confirmed = Math.min(now, record.ownerSeenAt + HEARTBEAT_OWNER_GRACE_MS);
+      const heartbeat = Math.min(confirmed, record.startedAt + MAX_SESSION_SECONDS * 1000);
       body.lastHeartbeatAt = toIso(Math.max(record.lastActivityAt, heartbeat));
     }
     return this.deps.privacy.filterForUpload(body);

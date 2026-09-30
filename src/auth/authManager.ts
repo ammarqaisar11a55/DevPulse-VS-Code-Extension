@@ -51,7 +51,13 @@ export class AuthManager {
 
   /** Restores the state from storage at startup or after another window changed it. */
   async initialize(): Promise<AuthState> {
+    // Never throws: unreadable secure storage is reported as a missing credential.
     const credential = await this.credentials.get();
+    if (this.credentials.unavailableReason) {
+      this.logger.warn('Secure storage is unavailable', {
+        reason: this.credentials.unavailableReason,
+      });
+    }
     const device = this.device;
     if (this.state.getGlobal('devpulse.revoked')) {
       this.set('REVOKED');

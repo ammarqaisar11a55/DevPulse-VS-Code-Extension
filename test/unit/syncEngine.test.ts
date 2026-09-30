@@ -148,7 +148,13 @@ describe('SyncEngine', () => {
   });
 
   it('creates open sessions, then heartbeats cumulative totals and ends them', async () => {
-    const open = record({ endedAt: null, endReason: null, activeSeconds: 600, revision: 2 });
+    const open = record({
+      endedAt: null,
+      endReason: null,
+      activeSeconds: 600,
+      revision: 2,
+      ownerSeenAt: clock.now(),
+    });
     await sessions.saveRecord(open);
     const sync = engine();
     await sync.sync();
@@ -376,5 +382,20 @@ describe('SyncEngine', () => {
     const [a, b] = await Promise.all([sync.sync(), sync.sync()]);
     expect(a).toBe(b);
     expect(server.events.size).toBe(1);
+  });
+
+  it('does not let a heartbeat after sleep stretch the session', async () => {
+    const lastSeen = clock.now() - 8 * 60 * MIN; // window asleep for 8 hours
+    const open = record({
+      endedAt: null,
+      endReason: null,
+      ownerSeenAt: lastSeen,
+      lastActivityAt: lastSeen - MIN,
+      startedAt: lastSeen - 30 * MIN,
+    });
+    await sessions.saveRecord(open);
+    await engine().sync();
+    const heartbeat = [...server.sessions.values()][0]!.lastHeartbeatAt!;
+    expect(Date.parse(heartbeat)).toBe(lastSeen + 90_000);
   });
 });

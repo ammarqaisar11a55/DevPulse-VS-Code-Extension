@@ -43,3 +43,24 @@ describe('StateStore', () => {
     expect(state.getGlobal('devpulse.trackingPaused')).toBeUndefined();
   });
 });
+
+describe('CredentialStore failures', () => {
+  const broken = {
+    get: () => Promise.reject(new Error('No keyring')),
+    store: () => Promise.reject(new Error('No keyring')),
+    delete: () => Promise.reject(new Error('No keyring')),
+  };
+
+  it('treats unreadable secure storage as no credential instead of throwing', async () => {
+    const store = new CredentialStore(broken);
+    expect(await store.get()).toBeUndefined();
+    expect(store.unavailableReason).toBe('No keyring');
+    await expect(store.clear()).resolves.toBeUndefined();
+  });
+
+  it('refuses to fall back to plain storage when secure storage fails', async () => {
+    const store = new CredentialStore(broken);
+    await expect(store.set('dpd_abc')).rejects.toMatchObject({ kind: 'STORAGE_ERROR' });
+    expect(await store.get()).toBeUndefined();
+  });
+});
