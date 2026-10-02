@@ -4,7 +4,19 @@ All notable changes to the DevPulse VS Code extension are documented here. The f
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses
 [Semantic Versioning](https://semver.org/).
 
-## [1.0.0] - 2026-09-30
+## [1.0.0] - 2026-10-03
+
+### Changed
+
+- Connects to the hosted DevPulse service at
+  https://devpulse-three-amber.vercel.app by default. Point
+  `devpulse.api.baseUrl` and `devpulse.web.url` at your own server to self-host or develop
+  locally (for example `http://localhost:4000/api/v1` and `http://localhost:5173`).
+
+### Added
+
+- **Open DevPulse Website** and **Open GitHub Repository** commands, shown as globe and GitHub
+  icons in the DevPulse view, in the status bar menu and in the summary dashboard.
 
 ### Added
 

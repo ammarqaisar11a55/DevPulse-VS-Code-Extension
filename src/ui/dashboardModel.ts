@@ -27,6 +27,8 @@ export const DASHBOARD_ACTIONS = [
   'syncNow',
   'openSettings',
   'connect',
+  'openWebsite',
+  'openRepository',
 ] as const;
 export type DashboardAction = (typeof DASHBOARD_ACTIONS)[number];
 

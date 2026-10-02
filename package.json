@@ -173,6 +173,18 @@
         "title": "Show Logs",
         "category": "DevPulse",
         "icon": "$(output)"
+      },
+      {
+        "command": "devpulse.openRepository",
+        "title": "Open GitHub Repository",
+        "category": "DevPulse",
+        "icon": "$(github)"
+      },
+      {
+        "command": "devpulse.openWebsite",
+        "title": "Open DevPulse Website",
+        "category": "DevPulse",
+        "icon": "$(globe)"
       }
     ],
     "configuration": [
@@ -315,13 +327,13 @@
         "properties": {
           "devpulse.api.baseUrl": {
             "type": "string",
-            "default": "http://localhost:4000/api/v1",
+            "default": "https://devpulse-three-amber.vercel.app/api/v1",
             "scope": "application",
             "markdownDescription": "DevPulse API base URL, including `/api/v1`. Change this for self-hosted deployments. HTTPS is required except for `localhost`."
           },
           "devpulse.web.url": {
             "type": "string",
-            "default": "http://localhost:5173",
+            "default": "https://devpulse-three-amber.vercel.app",
             "scope": "application",
             "description": "DevPulse web app URL, used by Open Dashboard."
           },
@@ -450,6 +462,16 @@
           "command": "devpulse.showDiagnostics",
           "when": "view == devpulse.activity",
           "group": "settings@2"
+        },
+        {
+          "command": "devpulse.openWebsite",
+          "when": "view == devpulse.activity",
+          "group": "navigation@5"
+        },
+        {
+          "command": "devpulse.openRepository",
+          "when": "view == devpulse.activity",
+          "group": "navigation@6"
         }
       ],
       "commandPalette": [

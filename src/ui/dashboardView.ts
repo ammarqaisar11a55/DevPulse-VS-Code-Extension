@@ -12,6 +12,8 @@ const ACTION_COMMANDS: Record<DashboardAction, string | ((paused: boolean) => st
   syncNow: Commands.syncNow,
   openSettings: Commands.openSettings,
   connect: Commands.connect,
+  openWebsite: Commands.openWebsite,
+  openRepository: Commands.openRepository,
 };
 
 /**
@@ -128,6 +130,10 @@ function renderHtml(cspSource: string, nonce: string): string {
   .muted { color: var(--vscode-descriptionForeground); }
   .hidden { display: none; }
   footer { margin-top: 28px; color: var(--vscode-descriptionForeground); font-size: 0.9em; }
+  .links { display: flex; flex-wrap: wrap; gap: 16px; margin-top: 10px; }
+  .link { background: none; border: 0; padding: 0; color: var(--vscode-textLink-foreground); cursor: pointer; font: inherit; }
+  .link:hover { color: var(--vscode-textLink-activeForeground); text-decoration: underline; }
+  .link:focus-visible { outline: 1px solid var(--vscode-focusBorder); outline-offset: 2px; }
 </style>
 </head>
 <body>
@@ -156,7 +162,13 @@ function renderHtml(cspSource: string, nonce: string): string {
     <div id="languages"><p class="muted">No coding time in this session yet.</p></div>
   </section>
 
-  <footer>DevPulse records coding time and metadata only — never keystrokes, clipboard contents or source code.</footer>
+  <footer>
+    <p>DevPulse records coding time and metadata only — never keystrokes, clipboard contents or source code.</p>
+    <nav class="links" aria-label="DevPulse links">
+      <button class="link" data-action="openWebsite">DevPulse website</button>
+      <button class="link" data-action="openRepository">Extension on GitHub</button>
+    </nav>
+  </footer>
 
 <script nonce="${nonce}">
   const vscode = acquireVsCodeApi();

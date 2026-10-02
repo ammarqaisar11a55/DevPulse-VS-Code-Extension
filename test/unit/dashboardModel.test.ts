@@ -12,6 +12,13 @@ describe('parseDashboardMessage', () => {
     expect(parseDashboardMessage('syncNow')).toBeUndefined();
     expect(parseDashboardMessage(null)).toBeUndefined();
   });
+
+  it('accepts the website and repository links', () => {
+    expect(parseDashboardMessage({ type: 'action', action: 'openWebsite' })).toBe('openWebsite');
+    expect(parseDashboardMessage({ type: 'action', action: 'openRepository' })).toBe(
+      'openRepository',
+    );
+  });
 });
 
 describe('dashboardModel', () => {

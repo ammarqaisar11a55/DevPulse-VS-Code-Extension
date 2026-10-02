@@ -71,6 +71,8 @@ export async function showQuickMenu(appState: AppState): Promise<void> {
   actions.push(
     { label: '$(gear) Settings', command: Commands.openSettings },
     { label: '$(pulse) Show Diagnostics', command: Commands.showDiagnostics },
+    { label: '$(globe) DevPulse Website', command: Commands.openWebsite },
+    { label: '$(github) GitHub Repository', command: Commands.openRepository },
   );
   if (connected)
     actions.push({ label: '$(debug-disconnect) Disconnect', command: Commands.disconnect });

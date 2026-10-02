@@ -6,8 +6,9 @@ import {
   type TrackingMode,
 } from './settingsTypes';
 
-const DEFAULT_BASE_URL = 'http://localhost:4000/api/v1';
-const DEFAULT_WEB_URL = 'http://localhost:5173';
+/** The hosted DevPulse service. Self-hosters and local development override these in settings. */
+const DEFAULT_BASE_URL = 'https://devpulse-three-amber.vercel.app/api/v1';
+const DEFAULT_WEB_URL = 'https://devpulse-three-amber.vercel.app';
 
 function bool(reader: ConfigurationReader, key: string, fallback: boolean): boolean {
   const value = reader.get(key);

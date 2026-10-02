@@ -162,30 +162,30 @@ the extension and the server then drop them.
 
 ## Settings
 
-| Setting                                | Default                        | Description                                                                 |
-| -------------------------------------- | ------------------------------ | --------------------------------------------------------------------------- |
-| `devpulse.enabled`                     | `true`                         | Turn the whole extension off without uninstalling it                        |
-| `devpulse.statusBar.enabled`           | `true`                         | Show the status bar item                                                    |
-| `devpulse.tracking.enabled`            | `true`                         | Record activity (off is the same as paused)                                 |
-| `devpulse.tracking.mode`               | `automatic`                    | `automatic` or `manual` sessions                                            |
-| `devpulse.tracking.idleThreshold`      | account setting, else `5`      | Minutes without activity before you are idle (1, 2, 5, 10 or 15)            |
-| `devpulse.tracking.sessionTimeout`     | `15`                           | Minutes of inactivity that end a session (5–120)                            |
-| `devpulse.tracking.pauseWhenUnfocused` | `true`                         | Do not count time while the window is unfocused                             |
-| `devpulse.privacy.trackLanguage`       | `true`                         | Send language ids                                                           |
-| `devpulse.privacy.trackFileNames`      | `false`                        | Send file extensions and changed file/line counts (never names or paths)    |
-| `devpulse.privacy.trackRepository`     | `false`                        | Send the repository URL                                                     |
-| `devpulse.privacy.trackGit`            | `true`                         | Send branch names and commit counts                                         |
-| `devpulse.privacy.trackTerminal`       | `false`                        | Count terminal focus as activity                                            |
-| `devpulse.privacy.trackDebugging`      | `true`                         | Count debugging as activity and send debug start/stop events                |
-| `devpulse.exclusions.projects`         | `[]`                           | Project names that are never tracked                                        |
-| `devpulse.exclusions.folders`          | `[]`                           | Folder globs that are never tracked                                         |
-| `devpulse.exclusions.languages`        | `[]`                           | Language ids that do not count                                              |
-| `devpulse.api.baseUrl`                 | `http://localhost:4000/api/v1` | DevPulse API URL (user settings only)                                       |
-| `devpulse.web.url`                     | `http://localhost:5173`        | DevPulse web app URL, for Open Dashboard (user settings only)               |
-| `devpulse.api.allowInsecureHttp`       | `false`                        | Allow `http://` on hosts other than `localhost` (development networks only) |
-| `devpulse.sync.interval`               | `60`                           | Seconds between background syncs (30–600)                                   |
-| `devpulse.logging.enabled`             | `false`                        | Detailed, redacted logs in the DevPulse output channel                      |
-| `devpulse.logging.level`               | `info`                         | Minimum level when logging is enabled                                       |
+| Setting                                | Default                                          | Description                                                                 |
+| -------------------------------------- | ------------------------------------------------ | --------------------------------------------------------------------------- |
+| `devpulse.enabled`                     | `true`                                           | Turn the whole extension off without uninstalling it                        |
+| `devpulse.statusBar.enabled`           | `true`                                           | Show the status bar item                                                    |
+| `devpulse.tracking.enabled`            | `true`                                           | Record activity (off is the same as paused)                                 |
+| `devpulse.tracking.mode`               | `automatic`                                      | `automatic` or `manual` sessions                                            |
+| `devpulse.tracking.idleThreshold`      | account setting, else `5`                        | Minutes without activity before you are idle (1, 2, 5, 10 or 15)            |
+| `devpulse.tracking.sessionTimeout`     | `15`                                             | Minutes of inactivity that end a session (5–120)                            |
+| `devpulse.tracking.pauseWhenUnfocused` | `true`                                           | Do not count time while the window is unfocused                             |
+| `devpulse.privacy.trackLanguage`       | `true`                                           | Send language ids                                                           |
+| `devpulse.privacy.trackFileNames`      | `false`                                          | Send file extensions and changed file/line counts (never names or paths)    |
+| `devpulse.privacy.trackRepository`     | `false`                                          | Send the repository URL                                                     |
+| `devpulse.privacy.trackGit`            | `true`                                           | Send branch names and commit counts                                         |
+| `devpulse.privacy.trackTerminal`       | `false`                                          | Count terminal focus as activity                                            |
+| `devpulse.privacy.trackDebugging`      | `true`                                           | Count debugging as activity and send debug start/stop events                |
+| `devpulse.exclusions.projects`         | `[]`                                             | Project names that are never tracked                                        |
+| `devpulse.exclusions.folders`          | `[]`                                             | Folder globs that are never tracked                                         |
+| `devpulse.exclusions.languages`        | `[]`                                             | Language ids that do not count                                              |
+| `devpulse.api.baseUrl`                 | `https://devpulse-three-amber.vercel.app/api/v1` | DevPulse API URL (user settings only)                                       |
+| `devpulse.web.url`                     | `https://devpulse-three-amber.vercel.app`        | DevPulse web app URL, for Open Dashboard (user settings only)               |
+| `devpulse.api.allowInsecureHttp`       | `false`                                          | Allow `http://` on hosts other than `localhost` (development networks only) |
+| `devpulse.sync.interval`               | `60`                                             | Seconds between background syncs (30–600)                                   |
+| `devpulse.logging.enabled`             | `false`                                          | Detailed, redacted logs in the DevPulse output channel                      |
+| `devpulse.logging.level`               | `info`                                           | Minimum level when logging is enabled                                       |
 
 The URL defaults point at a local development server. For a deployed DevPulse, set both URLs, for
 example `https://devpulse.example.com/api/v1` and `https://devpulse.example.com`. HTTPS is
@@ -210,6 +210,8 @@ All commands are in the Command Palette under **DevPulse**:
 | Show Diagnostics            | A support-safe report of the extension's state                |
 | Clear Local Activity Queue  | Delete queued events that were not uploaded (asks to confirm) |
 | Open Settings / Show Logs   | DevPulse settings and the output channel                      |
+| Open DevPulse Website       | Open the DevPulse web app (also a globe icon in the view)     |
+| Open GitHub Repository      | Open this extension's source code and issues on GitHub        |
 
 ## Offline behavior
 

@@ -18,6 +18,8 @@ export const Commands = {
   showDiagnostics: 'devpulse.showDiagnostics',
   openSettings: 'devpulse.openSettings',
   showLogs: 'devpulse.showLogs',
+  openRepository: 'devpulse.openRepository',
+  openWebsite: 'devpulse.openWebsite',
 } as const;
 
 export type CommandId = (typeof Commands)[keyof typeof Commands];

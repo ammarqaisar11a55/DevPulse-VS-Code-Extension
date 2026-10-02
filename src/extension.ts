@@ -6,6 +6,7 @@ import { AccountFlows } from './auth/accountFlows';
 import { AuthManager } from './auth/authManager';
 import { CredentialStore } from './auth/credentialStore';
 import { Commands } from './commands';
+import { REPOSITORY_URL } from './links';
 import { DeviceManager, validateDeviceName } from './devices/deviceManager';
 import { buildDiagnostics } from './diagnostics/diagnosticsService';
 import { DiagnosticsDocumentProvider, DIAGNOSTICS_SCHEME } from './diagnostics/diagnosticsView';
@@ -354,6 +355,10 @@ export function activate(context: vscode.ExtensionContext): DevPulseTestApi | un
   });
   register(Commands.openSettings, () => settings.open());
   register(Commands.showLogs, () => output.show(true));
+  register(Commands.openRepository, () =>
+    vscode.env.openExternal(vscode.Uri.parse(REPOSITORY_URL)),
+  );
+  register(Commands.openWebsite, () => account.openWeb(''));
 
   // 9. Start: restore state, then begin tracking and syncing in the background.
   shutdown = () => tracking.shutdown();
